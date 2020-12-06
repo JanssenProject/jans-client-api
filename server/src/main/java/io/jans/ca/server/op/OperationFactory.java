@@ -82,6 +82,10 @@ public class OperationFactory {
                     return new GetRequestObjectUriOperation(command, injector);
                 case GET_REQUEST_OBJECT_JWT:
                     return new GetRequestObjectOperation(command, injector);
+                case CLIENT_API_REDIRECT_ENDPOINT:
+                    return new ClientApiRedirectOperation(command, injector);
+                case AUTHORIZE:
+                    return new AuthorizeOperation(command, injector);
             }
             LOG.error("Command is not supported. Command: {}", command);
         } else {

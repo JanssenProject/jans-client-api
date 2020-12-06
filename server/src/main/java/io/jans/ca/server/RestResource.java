@@ -2,6 +2,8 @@ package io.jans.ca.server;
 
 import io.dropwizard.util.Strings;
 import io.jans.ca.common.params.*;
+import io.jans.ca.common.response.AuthorizeResponse;
+import io.jans.ca.common.response.GetAuthorizationUrlResponse;
 import io.opentracing.Scope;
 import io.jans.ca.common.Command;
 import io.jans.ca.common.CommandType;
@@ -23,6 +25,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.net.URI;
 import java.util.List;
 
 @Path("/")
@@ -116,6 +119,7 @@ public class RestResource {
     @Path("/get-authorization-url")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
+    @Deprecated
     public String getAuthorizationUrl(@HeaderParam("Authorization") String authorization, @HeaderParam("AuthorizationRpId") String AuthorizationRpId, String params) {
         return process(CommandType.GET_AUTHORIZATION_URL, params, GetAuthorizationUrlParams.class, authorization, AuthorizationRpId, httpRequest);
     }
@@ -124,6 +128,7 @@ public class RestResource {
     @Path("/get-authorization-code")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
+    @Deprecated
     public String getAuthorizationCode(@HeaderParam("Authorization") String authorization, @HeaderParam("AuthorizationRpId") String AuthorizationRpId, String params) {
         return process(CommandType.GET_AUTHORIZATION_CODE, params, GetAuthorizationCodeParams.class, authorization, AuthorizationRpId, httpRequest);
     }
@@ -132,8 +137,48 @@ public class RestResource {
     @Path("/get-tokens-by-code")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
+    @Deprecated
     public String getTokenByCode(@HeaderParam("Authorization") String authorization, @HeaderParam("AuthorizationRpId") String AuthorizationRpId, String params) {
         return process(CommandType.GET_TOKENS_BY_CODE, params, GetTokensByCodeParams.class, authorization, AuthorizationRpId, httpRequest);
+    }
+
+    @POST
+    @Path("/authorize")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response authorize(@HeaderParam("Authorization") String authorization, @HeaderParam("AuthorizationRpId") String AuthorizationRpId, String params) throws Exception {
+        AuthorizeResponse authorizeResponse = Jackson2.createJsonMapper().readValue(process(CommandType.AUTHORIZE, params, AuthorizeParams.class, authorization, AuthorizationRpId, httpRequest), AuthorizeResponse.class);
+        return Response.status(javax.ws.rs.core.Response.Status.MOVED_PERMANENTLY).location(new URI(authorizeResponse.getAuthorizationUrl())).build();
+    }
+
+    @GET
+    @Path("/authorize")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response authorizationUrlGet(@HeaderParam("Authorization") String authorization,
+                                        @HeaderParam("AuthorizationRpId") String AuthorizationRpId,
+                                        @QueryParam("rp_id") String rpId,
+                                        @QueryParam("acr_value") List<String> acrValues,
+                                        @QueryParam("scope") List<String> scope,
+                                        @QueryParam("state") String state,
+                                        @QueryParam("nonce") String nonce,
+                                        @QueryParam("redirect_uri") String redirectUri,
+                                        @QueryParam("response_type") List<String> responseTypes) throws Exception {
+
+        AuthorizeResponse authorizeResponse = Jackson2.createJsonMapper().readValue(process(CommandType.AUTHORIZE, (new AuthorizeParams(rpId, acrValues, scope, state, nonce, redirectUri, responseTypes)).toJsonString(), AuthorizeParams.class, authorization, AuthorizationRpId, httpRequest), AuthorizeResponse.class);
+        return Response.status(javax.ws.rs.core.Response.Status.MOVED_PERMANENTLY).location(new URI(authorizeResponse.getAuthorizationUrl())).build();
+    }
+
+    @GET
+    @Path("/client-api-redirect-endpoint/{rp_id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public String redirectEndpoint(@HeaderParam("Authorization") String authorization,
+                                   @HeaderParam("AuthorizationRpId") String AuthorizationRpId,
+                                   @PathParam("rp_id") String rpId,
+                                   @QueryParam("state") String state,
+                                   @QueryParam("code") String code,
+                                   @QueryParam("id_token") String idToken,
+                                   @QueryParam("access_token") String accessToken) {
+        return process(CommandType.CLIENT_API_REDIRECT_ENDPOINT, (new ClientApiRedirectEndpointParams(rpId, code, idToken, accessToken, state)).toJsonString(), ClientApiRedirectEndpointParams.class, authorization, AuthorizationRpId, httpRequest);
     }
 
     @POST
@@ -148,6 +193,7 @@ public class RestResource {
     @Path("/get-logout-uri")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
+    @Deprecated
     public String getLogoutUri(@HeaderParam("Authorization") String authorization, @HeaderParam("AuthorizationRpId") String AuthorizationRpId, String params) {
         return process(CommandType.GET_LOGOUT_URI, params, GetLogoutUrlParams.class, authorization, AuthorizationRpId, httpRequest);
     }

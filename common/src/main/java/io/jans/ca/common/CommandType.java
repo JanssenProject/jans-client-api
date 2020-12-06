@@ -25,6 +25,8 @@ public enum CommandType {
     GET_AUTHORIZATION_URL("get_authorization_url", true, MediaType.APPLICATION_JSON),
     GET_AUTHORIZATION_CODE("get_authorization_code", true, MediaType.APPLICATION_JSON),
     GET_TOKENS_BY_CODE("get_tokens_by_code", true, MediaType.APPLICATION_JSON),
+    AUTHORIZE("authorize", true, MediaType.APPLICATION_JSON),
+    CLIENT_API_REDIRECT_ENDPOINT("client_api_redirect_endpoint", true, MediaType.APPLICATION_JSON),
     GET_USER_INFO("get_user_info", true, MediaType.APPLICATION_JSON),
     GET_LOGOUT_URI("get_logout_uri", true, MediaType.APPLICATION_JSON),
     GET_ACCESS_TOKEN_BY_REFRESH_TOKEN("get_access_token_by_refresh_token", true, MediaType.APPLICATION_JSON),

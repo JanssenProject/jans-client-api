@@ -160,6 +160,13 @@
             <class name="io.jans.ca.server.UmaSpontaneousScopeTest"/>
         </classes>
     </test>
+
+    <test name="Authorize Test" enabled="true">
+        <classes>
+            <class name="io.jans.ca.server.AuthorizeTest"></class>
+        </classes>
+    </test>
+
     <!-- UMA Tests -->
     <test name="UMA - Full Flow Test" enabled="true">
         <classes>

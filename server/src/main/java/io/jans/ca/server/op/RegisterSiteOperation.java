@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * @author Yuriy Zabrovarnyy
@@ -505,6 +506,12 @@ public class RegisterSiteOperation extends BaseOperation<RegisterSiteParams> {
         if (!Strings.isNullOrEmpty(params.getClientName())) {
             clientName = params.getClientName();
         }
+
+        List<String> redirectUris = params.getRedirectUris().stream()
+                .map(uri -> uri.endsWith("/client-api-redirect-endpoint") ?  uri + "/" + rpId : uri)
+                .map(uri -> uri.endsWith("/client-api-redirect-endpoint/") ?  uri + rpId : uri)
+                .collect(Collectors.toList());
+        params.setRedirectUris(redirectUris);
 
         final RegisterRequest request = new RegisterRequest(ApplicationType.WEB, clientName, params.getRedirectUris());
         request.setResponseTypes_(params.getResponseTypes());

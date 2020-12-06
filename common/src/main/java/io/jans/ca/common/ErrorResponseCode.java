@@ -47,6 +47,7 @@ public enum ErrorResponseCode {
     INVALID_ID_TOKEN_BAD_SIGNATURE(500, "invalid_id_token_bad_signature", "Invalid id_token. Bad signature."),
     INVALID_ID_TOKEN_INVALID_ALGORITHM(500, "invalid_id_token_invalid_algorithm", "Invalid id_token. The algorithm used to sign the ID Token does not matches with `id_token_signed_response_alg` algorithm set during client registration.."),
     INVALID_ID_TOKEN_UNKNOWN(500, "invalid_id_token_unknown", "Invalid id_token, validation fail due to exception, please check jans_client_api.log for details."),
+    INVALID_ID_TOKEN(500, "invalid_id_token", "Invalid id_token, validation fail due to exception, please check jans_client_api.log for details."),
     INVALID_ACCESS_TOKEN_BAD_HASH(500, "invalid_access_token_bad_hash", "access_token is invalid. Hash of access_token does not match hash from id_token (at_hash)."),
     INVALID_STATE_BAD_HASH(500, "invalid_state_bad_hash", "State is invalid. Hash of state does not match hash from id_token (s_hash)."),
     INVALID_AUTHORIZATION_CODE_BAD_HASH(500, "invalid_authorization_code_bad_hash", "Authorization code is invalid. Hash of authorization code does not match hash from id_token (c_hash)."),
